@@ -18,7 +18,8 @@ Optionally, you can visit admin/settings/ulogin to choose the placement of the "
 
 Recommendations
 ---------------
-Either:  
+Either:
+
 * Create a custom menu item in your Primary navigation called "Login/Register" which links to "user/login". Because of the permissions on user/login, this item will only show to anonymous users and it will link to the Unified Login page.
 * - Or -
 * Enable LoginToboggan and set the 'User login' block to display as a link.
