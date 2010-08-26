@@ -1,0 +1,130 @@
+<?php
+
+function ulogin_menu() {
+  $items = array();
+  $items['admin/settings/ulogin'] = array(
+    'title' => 'Unified login',
+    'description' => 'Settings for Unified Login module',
+    'access callback' => 'user_access',
+    'access arguments' => array('administer site configuration'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('ulogin_settings'),
+  );
+
+  return $items;
+}
+
+function ulogin_form_alter(&$form, &$form_state, $form_id) {
+  switch ($form_id) {
+    case 'user_login' : 
+      $place = variable_get('ulogin_forgot_placement', 'form');
+      if ($place == 'desc' || $place == 'both') {
+        $form['pass']['#description'] .= ' <span class="login-forgot">'. l(t('I forgot my password'), 'user/password') . '</span>.';
+      }
+      if ($place == 'form' || $place == 'both') {
+        $form['lost_password'] = array(
+          '#value' => '<div class="login-forgot"><p>' . l(t('I forgot my password'), 'user/password') . '</p></div>',
+          //'#weight' => 100,
+        );
+      }
+      break;
+  }
+}
+
+/**
+ * Implementation of hook_menu_alter().
+ */
+function ulogin_menu_alter(&$callbacks) {
+  // Kill the tabs on the login pages.
+  $callbacks['user/register']['type'] = MENU_CALLBACK;
+  $callbacks['user/register']['page callback'] = 'ulogin_unified_login_page';
+  $callbacks['user/register']['page arguments'] = array('register');
+  $callbacks['user/login']['page callback'] = 'ulogin_unified_login_page';
+  $callbacks['user/password']['type'] = MENU_CALLBACK;
+  $callbacks['user']['page callback'] = 'ulogin_unified_login_page';
+}
+
+
+function ulogin_settings() {
+  $form = array();
+  $form['ulogin_forgot_placement'] = array(
+    '#title' => t('Placement of \'I forgot my password\' link'),
+    '#type' => 'radios',
+    '#options' => array(
+      'desc' => t('In the description below the password field'),
+      'form' => t('At the end of the login form'),
+      'both' => t('In both places'),
+    ),
+    '#default_value' => variable_get('ulogin_forgot_placement', 'form'),
+  );
+  return system_settings_form($form);
+}
+
+/**
+ * Menu callback for user/login
+ *   creates a unified login/registration form (without tabs)
+ */
+function ulogin_unified_login_page($active_form = 'login') {
+  global $user;
+  if ($user->uid) {
+    menu_set_active_item('user/'. $user->uid);
+    return menu_execute_active_handler();
+  }
+  else {
+    $login_form    = drupal_get_form('user_login');
+    if (user_register_access()) {
+      $register_form = drupal_get_form('user_register');
+    }
+    // TODO: Somehow add a class of "default" to whichever form is the default.
+    // Then, in the JS, remove hard-coding of hiding the register form, and instead
+    // hide the one not marked 'default'
+    $output = theme('unified_login_page', $login_form, $register_form, $active_form);
+
+    return $output;
+  }
+}
+
+/**
+ * Theme function for unified login page.
+ *
+ * @ingroup themable
+ */
+function theme_unified_login_page($login_form, $register_form, $active_form) {
+  // Add some JS and CSS loveliness.
+  $path = drupal_get_path('module', 'ulogin');
+  drupal_add_css($path . '/ulogin.css');
+  drupal_add_js(array('ulogin' => array('activeForm' => $active_form)), 'setting');
+  drupal_add_js($path . '/ulogin.js');
+  drupal_set_title('');
+  $output = '';
+
+  $output .= '<div class="ulogin '.$active_form.'">';
+
+  // Create the initial message and links that people can click on.
+  $output .= '<div id="login-message">' . t('You are not logged in.') . '</div>';
+  if (!is_null($register_form)) {
+    $output .= '<div id="login-links">';
+    $output .= l(t('I have an account'), 'user/login', array('attributes' => array('class' => 'login-link', 'id' => 'login-link')));
+    $output .= l(t('I want to create an account'), 'user/register', array('attributes' => array('class' => 'login-link', 'id' => 'register-link')));
+    $output .= '</div>';
+  }
+
+  // Add the login and registration forms in.
+  $output .= '<div id="login-form">' . $login_form . '</div>';
+  
+  if (!is_null($register_form)) {
+    $output .= '<div id="register-form">' . $register_form . '</div>';
+  }
+
+  $output .= '</div>';
+
+  return $output;
+}
+
+function ulogin_theme() {
+   return array(
+    'unified_login_page' => array(
+      'arguments' => array('login_form' => NULL, 'register_form' => NULL),
+    ),
+  );
+}

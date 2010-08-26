@@ -1,0 +1,4 @@
+; $Id $
+name = Unified Login
+description = Creates a unified login/registration page for better login/registration workflow.
+core = 6.x

@@ -1,0 +1,35 @@
+.ulogin #login-message {
+  text-align: center;
+  font-size: 2em;
+  line-height: 1.2;
+}
+
+.ulogin #login-links {
+  text-align: center;
+  font-size: 1.5em;
+  line-height: 2.7;
+}
+
+.ulogin #login-links a {
+  padding: .5em;
+  border: 1px #666 solid;
+  background-color: #EEE;
+}
+
+.ulogin #login-links a:hover {
+  background-color: #DDD;
+}
+
+.ulogin #login-links a.ul-active,
+.ulogin #login-links a.ul-active:hover {
+  background-color: #FFF19A;
+  border: 2px #333 solid;
+}
+
+.ulogin.login #register-form {
+  display: none;
+}
+
+.ulogin.register #login-form {
+  display: none;
+ }
