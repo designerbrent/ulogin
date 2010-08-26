@@ -1,4 +1,4 @@
-**Unified Login** was originally written by Jeff Robbins and Lullabot for [Buzzr](http://www.buzzr.com) as a [patch for LoginToboggan](http://drupal.org/node/264332).
+**Unified Login** was originally written by Jeff Robbins and Lullabot for [Buzzr](http://www.buzzr.com) as a [patch for LoginToboggan](http://drupal.org/node/264332). This version is a stand alone module which does not depend on LoginToboggan.
 
 It is intended to simplify the user registration and login process by creating a unified login/registration page with two big buttons at the top of the page: "I have an account" and "I want to create an account". Clicking on these buttons swaps out the login and registration forms using Javascript rather than a full page reload.
 
@@ -21,7 +21,7 @@ Recommendations
 Either:
 
 * Create a custom menu item in your Primary navigation called "Login/Register" which links to "user/login". Because of the permissions on user/login, this item will only show to anonymous users and it will link to the Unified Login page.
-* - Or -
+* ~ Or ~
 * Enable LoginToboggan and set the 'User login' block to display as a link.
 
 You'll probably want to do some CSS styling on the "I have an account"/"I want to create an account" buttons in your theme.
