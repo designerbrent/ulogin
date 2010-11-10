@@ -95,7 +95,6 @@ function theme_unified_login_page($login_form, $register_form, $active_form) {
   drupal_add_css($path . '/ulogin.css');
   drupal_add_js(array('ulogin' => array('activeForm' => $active_form)), 'setting');
   drupal_add_js($path . '/ulogin.js');
-  drupal_set_title('');
   $output = '';
 
   $output .= '<div class="ulogin '.$active_form.'">';
